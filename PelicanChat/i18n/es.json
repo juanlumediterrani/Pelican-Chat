@@ -1,0 +1,25 @@
+{
+  "tab.all": "Todo",
+  "tab.local": "Local",
+  "tab.global": "Global",
+  "tab.discord": "Discord",
+  "tab.whisper": "Susurros",
+  "tab.system": "Eventos",
+
+  "ui.new_messages": "↓ {{count}} nuevos",
+  "ui.scroll_hint": "Scroll: Rueda / RePág / AvPág",
+  "ui.channel_tag.all": "[Global]",
+  "ui.channel_tag.local": "[Local]",
+  "ui.channel_tag.global": "[Global]",
+  "ui.channel_tag.discord": "[Discord]",
+  "ui.channel_tag.whisper": "[Susurro]",
+  "ui.channel_tag.system": "[Eventos]",
+
+  "chat.local_help": "Enviar mensaje al canal de proximidad local (/l o /local <mensaje>)",
+  "chat.global_help": "Enviar mensaje al canal global (/g o /global <mensaje>)",
+  "chat.discord_help": "Enviar mensaje al canal puenteado de Discord (/d o /discord <mensaje>)",
+  "chat.local_usage": "Uso: /l <mensaje> o /local <mensaje>",
+  "chat.global_usage": "Uso: /g <mensaje> o /global <mensaje>",
+  "chat.discord_usage": "Uso: /d <mensaje> o /discord <mensaje>",
+  "chat.system_tab_readonly": "La pestaña Eventos es de solo lectura. Cambia a Global/Local/Discord o usa un /comando."
+}

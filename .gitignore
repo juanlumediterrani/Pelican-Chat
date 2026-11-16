@@ -1,0 +1,45 @@
+# .NET build outputs
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+
+# IDE & Editor settings
+.idea/
+.vscode/
+
+# Local configuration and credentials
+local.props
+config.json
+.env
+.env.*
+!.env.example
+*.token
+*.secret
+*.key
+*.pem
+*.pfx
+*.p12
+
+# Runtime data
+data/
+
+# Archives and binaries
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+
+# Agent tooling & local metadata
+.agents/
+
+# Operating system artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+*.tmp
+*.bak

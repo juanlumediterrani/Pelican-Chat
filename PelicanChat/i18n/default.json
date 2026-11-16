@@ -1,0 +1,25 @@
+{
+  "tab.all": "All",
+  "tab.local": "Local",
+  "tab.global": "Global",
+  "tab.discord": "Discord",
+  "tab.whisper": "Whispers",
+  "tab.system": "Events",
+
+  "ui.new_messages": "↓ {{count}} new",
+  "ui.scroll_hint": "Scroll: Wheel / PgUp / PgDn",
+  "ui.channel_tag.all": "[Global]",
+  "ui.channel_tag.local": "[Local]",
+  "ui.channel_tag.global": "[Global]",
+  "ui.channel_tag.discord": "[Discord]",
+  "ui.channel_tag.whisper": "[Whisper]",
+  "ui.channel_tag.system": "[Events]",
+
+  "chat.local_help": "Send message to local proximity channel (/l or /local <message>)",
+  "chat.global_help": "Send message to global channel (/g or /global <message>)",
+  "chat.discord_help": "Send message to bridged Discord channel (/d or /discord <message>)",
+  "chat.local_usage": "Usage: /l <message> or /local <message>",
+  "chat.global_usage": "Usage: /g <message> or /global <message>",
+  "chat.discord_usage": "Usage: /d <message> or /discord <message>",
+  "chat.system_tab_readonly": "The Events tab is read-only. Switch to Global/Local/Discord or type a /command."
+}

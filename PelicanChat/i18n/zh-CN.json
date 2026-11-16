@@ -1,0 +1,25 @@
+{
+  "tab.all": "全部",
+  "tab.local": "附近",
+  "tab.global": "全局",
+  "tab.discord": "Discord",
+  "tab.whisper": "私聊",
+  "tab.system": "事件",
+
+  "ui.new_messages": "↓ {{count}} 条新消息",
+  "ui.scroll_hint": "滚动: 滚轮 / PgUp / PgDn",
+  "ui.channel_tag.all": "[全局]",
+  "ui.channel_tag.local": "[附近]",
+  "ui.channel_tag.global": "[全局]",
+  "ui.channel_tag.discord": "[Discord]",
+  "ui.channel_tag.whisper": "[私聊]",
+  "ui.channel_tag.system": "[事件]",
+
+  "chat.local_help": "向本地附近频道发送消息（/l 或 /local <消息>）",
+  "chat.global_help": "向全局频道发送消息（/g 或 /global <消息>）",
+  "chat.discord_help": "向桥接的 Discord 频道发送消息（/d 或 /discord <消息>）",
+  "chat.local_usage": "用法：/l <消息> 或 /local <消息>",
+  "chat.global_usage": "用法：/g <消息> 或 /global <消息>",
+  "chat.discord_usage": "用法：/d <消息> 或 /discord <消息>",
+  "chat.system_tab_readonly": "事件标签页为只读。请切换到全局/附近/Discord，或输入 /命令。"
+}

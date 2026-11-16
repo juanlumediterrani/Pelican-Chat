@@ -1,0 +1,10 @@
+{
+  "Name": "PelicanChat",
+  "Author": "Pelican 4Ever Team",
+  "Version": "0.1.0",
+  "Description": "Scrollable, tabbed, Discord-ready ChatBox overhaul for Stardew Valley with full Pelican 4Ever integration.",
+  "UniqueID": "Pelican4Ever.Chat",
+  "EntryDll": "PelicanChat.dll",
+  "MinimumApiVersion": "4.1.0",
+  "UpdateKeys": []
+}

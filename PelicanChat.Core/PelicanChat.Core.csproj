@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Lógica de dominio pura de PelicanChat: SIN referencias a Stardew Valley, SMAPI, MonoGame ni Harmony.
+    Probada con xUnit en PelicanChat.Tests sin arrancar el juego.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RootNamespace>PelicanChat.Core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="PelicanChat.Tests" />
+  </ItemGroup>
+
+</Project>
