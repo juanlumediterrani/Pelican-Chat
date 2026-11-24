@@ -2,6 +2,7 @@
 
 * **Estado:** Aceptado
 * **Fecha:** 2026-11-15
+* **Ámbito:** `PelicanChat/ModEntry.cs`, `PelicanChat/Integration/*`, `PelicanChat/Framework/IPelican4EverChatApi.cs`, `PelicanChat/manifest.json`
 
 ## Contexto
 

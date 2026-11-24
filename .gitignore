@@ -33,8 +33,15 @@ data/
 *.7z
 *.rar
 
-# Agent tooling & local metadata
-.agents/
+# Agent tooling & local metadata (EST-001 v1.2)
+.agents/*
+!.agents/skills/
+!.agents/skills/**
+!.agents/skills.json
+!.agents/plugins.json
+!.agents/hooks.json
+!.agents/rules/
+!.agents/rules/**
 
 # Operating system artifacts
 .DS_Store

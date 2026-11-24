@@ -2,6 +2,7 @@
 
 * **Estado:** Aceptado
 * **Fecha:** 2026-11-15
+* **Ámbito:** `PelicanChat/Patches/*`, `PelicanChat/UI/*`, `PelicanChat/Modules/ChatViewModule.cs`, `PelicanChat.Core/Viewport/*`
 
 ## Contexto
 

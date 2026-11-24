@@ -1,6 +1,6 @@
 # PelicanChat (`Pelican4Ever.Chat`)
 
-Mod independiente para **Stardew Valley 1.6.15+** (**SMAPI 4.1+**) que convierte el `ChatBox` nativo en una vista de chat moderna con **scroll**, **pestañas por canal**, **ruteo contextual** y **puente bidireccional con Discord**, diseñado para funcionar de forma **100% autónoma** en partidas vanilla/cooperativas e **integrarse plenamente** con [**Pelican 4Ever**](../Stardew%20Valley%20MORPG/README.md).
+Mod independiente para **Stardew Valley 1.6.15+** (**SMAPI 4.1+**) que convierte el `ChatBox` nativo en una vista de chat moderna con **scroll**, **pestañas por canal**, **ruteo contextual** y **puente bidireccional con Discord**, diseñado para funcionar de forma **100% autónoma** en partidas vanilla/cooperativas e **integrarse plenamente** con [**Pelican 4Ever**](../Pelican4Ever/README.md).
 
 ---
 
@@ -11,7 +11,7 @@ Mod independiente para **Stardew Valley 1.6.15+** (**SMAPI 4.1+**) que convierte
 - **Listo para Discord:** Canal dedicado `#7289DA`, sanitización estricta contra inyección de corchetes `[color]`/`[emoji]` en `ChatMessage`, prevención de bucles de eco y cero secretos/tokens de bot en los clientes.
 - **Dualidad Autónomo + Pelican 4Ever:**
   - **Sin `Pelican 4Ever`:** Provee sus propios comandos `/l`, `/g`, `/w`, `/d`, red de proximidad SMAPI y puente Discord opcional en el Host.
-  - **Con `Pelican 4Ever` (`Pelican4Ever.SVRTMP`):** Se acopla vía SMAPI Mod API (`GetApi`) para sincronizar sellos `[HH:mm]` del reloj 1:1, evitar duplicar comandos con `ChatChannelModule`, clasificar avisos de *Rollover*, *Festivales* y *Mercado Vecinal* en `Eventos` y conectarse al bus `/api/v1/host/chat` + `HostEventLog` (`chat.message`) usado por **Putre / Hermes**.
+  - **Con `Pelican 4Ever` (`Pelican4Ever.SVRTMP`):** Se acopla vía SMAPI Mod API (`GetApi`) para sincronizar sellos `[HH:mm]` del reloj 1:1, evitar duplicar comandos con `ChatChannelModule`, clasificar avisos de *Rollover*, *Festivales* y *Mercado Vecinal* en `Eventos` y conectarse al bus `/api/v1/host/chat` + `HostEventLog` (`chat.message`) usado por **Yuki** (`DEC-0004`).
 
 ---
 

@@ -10,7 +10,7 @@ Basado en [`GSS.md`](GSS.md), [`architecture.md`](architecture.md) y los ADRs ([
 * **`Pathoschild.Stardew.ModBuildConfig` (v4.3.2)**: Empaqueta y despliega automáticamente el mod en `Mods/PelicanChat` al compilar. Ruta del juego en `local.props` (copiar desde `local.props.example`).
 * **ILSpy CLI (`ilspycmd`)**: Decompilador usado para verificar `StardewValley.Menus.ChatBox`, `ChatMessage` y `Game1`.
 * **xUnit (`PelicanChat.Tests`)**: Suite de pruebas unitarias deterministas sobre `PelicanChat.Core` (`dotnet test`).
-* **Puente de Integración**: `Pelican4Ever.SVRTMP` (`PelicanApi`, `ChatChannelModule`, `AdminApiModule`) + `Putre / Hermes` (`discord_bridge.py`).
+* **Puente de Integración**: `Pelican4Ever.SVRTMP` (`PelicanApi`, `ChatChannelModule`, `AdminApiModule`) + **Yuki** (`DEC-0004`, Discord + ops AWS).
 
 ---
 

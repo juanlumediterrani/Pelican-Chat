@@ -2,6 +2,7 @@
 
 * **Estado:** Aceptado
 * **Fecha:** 2026-11-15
+* **Ámbito:** `PelicanChat/Modules/{DiscordBridgeModule,ChatTransportModule}.cs`, `PelicanChat.Core/Discord/*`, `PelicanChat.Core/Channels/*`
 
 ## Contexto
 
