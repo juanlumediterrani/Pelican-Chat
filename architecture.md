@@ -7,7 +7,7 @@
 
 ## 1. Estructura de la Solución (`.NET`)
 
-Siguiendo el patrón arquitectónico de **Pelican 4Ever** ([ADR-0004](file:///home/mtx/Documentos/Projects/Stardew%20Valley%20MORPG/docs/adr/0004-host-authority-client-mod-and-satiety.md)), la solución separa estrictamente la lógica de dominio pura de las dependencias de MonoGame, XNA, Harmony y SMAPI:
+Siguiendo el patrón arquitectónico de **Pelican 4Ever** ([ADR-0004](../Pelican4Ever/docs/adr/0004-host-authority-client-mod-and-satiety.md)), la solución separa estrictamente la lógica de dominio pura de las dependencias de MonoGame, XNA, Harmony y SMAPI:
 
 ```text
 PelicanChat.sln
