@@ -8,8 +8,8 @@ public class ChatSanitizerTests
     [Fact]
     public void SanitizeForChatBox_NeutralizesColorAndEmojiBrackets()
     {
-        string result = ChatSanitizer.SanitizeForChatBox("Hola [red]mundo [12] [sinCerrar");
-        Assert.Equal("Hola (red)mundo (12) (sinCerrar", result);
+        string result = ChatSanitizer.SanitizeForChatBox("Hola [red]mundo [0] [12] [999] [sinCerrar");
+        Assert.Equal("Hola (red)mundo (0) (12) (999) (sinCerrar", result);
         Assert.DoesNotContain("[", result);
         Assert.DoesNotContain("]", result);
     }
@@ -30,5 +30,15 @@ public class ChatSanitizerTests
         Assert.EndsWith("...", result);
         Assert.DoesNotContain("\n", result);
         Assert.DoesNotContain("\r", result);
+    }
+
+    [Fact]
+    public void SanitizeAuthor_StripsBracketsSurrogatesAndCapsLength()
+    {
+        Assert.Equal("Discord", ChatSanitizer.SanitizeAuthor("   "));
+        string cleaned = ChatSanitizer.SanitizeAuthor("[red]Jugador🔥ConNombreMuyLargoParaChatBoxDeStardew");
+        Assert.DoesNotContain("[", cleaned);
+        Assert.DoesNotContain("]", cleaned);
+        Assert.True(cleaned.Length <= ChatSanitizer.MaxAuthorLength);
     }
 }

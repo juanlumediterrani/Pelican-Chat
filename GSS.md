@@ -21,7 +21,7 @@
      - Se sincroniza con el reloj 1:1 del servidor (`06:00–01:50` y estado `NightHold` en `2550`) para estampar la hora real/de juego `[HH:mm]` en cada entrada.
      - Coopera con `ChatChannelModule` (`Pelican4Ever`) para evitar duplicar registros en `ChatCommands` (`/l`, `/g`, `/w`) y compartir los paquetes de proximidad `LocalChat`.
      - Clasifica automáticamente los mensajes generados por los módulos de **Pelican 4Ever** (*Rollover* de las `02:00 AM`, avisos de *Festivales*, *Mercado Vecinal* y *Pedidos por Correo*) en la pestaña `Eventos`.
-     - Utiliza la API REST de anfitrión (`/api/v1/host/chat` y `HostEventLog` con `chat.message` en `GET /api/v1/host/events?since=N`) para conectar el juego con **Discord**, el anfitrión agente (**Dr4co / Stardew Voyager**) y el bot guardián (**Putre / Hermes**).
+     - Utiliza la API REST de anfitrión (`/api/v1/host/chat` y `HostEventLog` con `chat.message` en `GET /api/v1/host/events?since=N`) para conectar el juego con **Discord**, el anfitrión agente (**Stardew Voyager**) y el operador Discord/AWS (**Yuki**, `DEC-0004`).
 
 ### 1.2 Fuera de Alcance
 
@@ -59,7 +59,7 @@
 | **Vecino de Pelican 4Ever** | Seguir charlas locales, globales, avisos de festivales y el chat con Discord en sesiones de 30–90 min. | El historial se borra a los 10 mensajes, sin scroll y todo mezclado en un bloque. | Historial de 200 mensajes/canal, scroll suave, pestañas dedicadas y sellos `[HH:mm]` del reloj 1:1. |
 | **Jugador Co-op Vanilla** | Mejorar el chat de partidas cooperativas estándar sin instalar el mod completo de servidor persistente. | Sin pestañas, sin proximidad y sin poder releer mensajes anteriores. | Funciona de forma autónoma con todas las mejoras de UI, scroll, proximidad y Discord opcional. |
 | **Participante desde Discord** | Saludar o coordinarse desde *La Taberna* (Discord) con quienes están conectados en el valle. | Desconexión total entre Discord y la ventana del juego (salvo anuncios puntuales del bot). | Canal puenteado bidireccional con prefijo `[Discord]` claro y sanitización segura. |
-| **Anfitrión Agente / Guardián (`Dr4co` / `Putre`)** | Emitir avisos operativos, leer mensajes de comunidad desde `HostEventLog` y garantizar llegada a todos los *farmhands*. | `BroadcastToAllPlayers` en Host solo pintaba localmente sin llegar a clientes por red. | Retransmisión real Host $\rightarrow$ Clientes vía SMAPI e integración nativa con `/api/v1/host/chat`. |
+| **Anfitrión Agente / Operador (`Stardew Voyager` / `Yuki`)** | Emitir avisos operativos, leer mensajes de comunidad desde `HostEventLog` y garantizar llegada a todos los *farmhands*. | `BroadcastToAllPlayers` en Host solo pintaba localmente sin llegar a clientes por red. | Retransmisión real Host $\rightarrow$ Clientes vía SMAPI e integración nativa con `/api/v1/host/chat`. |
 
 ---
 
@@ -102,13 +102,13 @@
 | ID | Requisito | Prioridad |
 | :--- | :--- | :--- |
 | `RF-23` | Definir un modelo unificado de mensaje externo (`ExternalChatMessage`) con origen (`Discord`, `HostAgent`), autor, canal, marca temporal y cuerpo. | Alta |
-| `RF-24` | **Camino Integrado (con `Pelican 4Ever`):** El Host registra los mensajes salientes de `Global` y `Discord` en `AdminApiModule.EventLog` con tipo `chat.message` para que el puente externo (`hermes-putre-discord` o daemon) los publique en Discord sin exponer tokens en el juego. | Alta |
-| `RF-25` | **Camino Integrado (entrada desde Discord):** El Host expone `POST /api/v1/host/chat` en `AdminApiModule` para recibir mensajes validados desde Discord/Putre y retransmitirlos a todos los clientes conectados. | Alta |
+| `RF-24` | **Camino Integrado (con `Pelican 4Ever`):** El Host registra los mensajes salientes del canal `Discord` (`/d` o pestaña `Discord`) en `AdminApiModule.EventLog` con tipo `chat.message` para que **Yuki** (`DEC-0004`) los publique en Discord sin exponer tokens en el juego (`ADR-0004`). | Alta |
+| `RF-25` | **Camino Integrado (entrada desde Discord):** El Host expone `POST /api/v1/host/chat` en `AdminApiModule` para recibir mensajes validados desde Discord/**Yuki** y retransmitirlos a todos los clientes conectados. | Alta |
 | `RF-26` | **Camino Autónomo (sin `Pelican 4Ever`):** Soportar configuración opcional en el Host de un `DiscordWebhookUrl` (solo salida asíncrona no bloqueante) o puente HTTP loopback local cuando se ejecuta sin `Pelican 4Ever`. | Media |
 | `RF-27` | Sanitizar obligatoriamente todo mensaje entrante de Discord en `ChatSanitizer` antes de pasarlo a `ChatBox` / `ChatMessage.parseMessageForEmoji`. | Alta |
 | `RF-28` | `ChatSanitizer` debe neutralizar etiquetas `[color]` o `[índice]` arbitrarias procedentes de texto externo, truncar a `MaxInboundMessageLength` (p. ej. `280` caracteres), normalizar saltos de línea y reemplazar caracteres/emojis fuera de `Fonts\SmallFont` por equivalentes ASCII seguros o `?` controlado. | Alta |
 | `RF-29` | Formatear los mensajes procedentes de Discord con el prefijo identificable `[Discord] <Autor>: <Texto>` y su color institucional (`#7289DA` o variante legible sobre el fondo beige de Stardew). | Alta |
-| `RF-30` | Garantizar que los canales privados o espaciales (`Local` y `Susurros`) **nunca** se reenvían a Discord ni se exponen en `HostEventLog`. | Alta |
+| `RF-30` | Garantizar que los canales internos o espaciales (`Global`, `Local`, `Susurros` y `Eventos`) **nunca** se reenvían a Discord ni se exponen en `HostEventLog` (`ADR-0004`). | Alta |
 | `RF-31` | Aplicar *rate limiting* configurable en el envío hacia/desde Discord para evitar inundación del `ChatBox` o bloqueos de webhook. | Media |
 | `RF-32` | Evitar bucles de eco (*echo loops*): un mensaje inyectado desde Discord hacia el juego no debe volver a emitirse como `chat.message` saliente hacia Discord. | Alta |
 

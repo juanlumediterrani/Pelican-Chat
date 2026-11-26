@@ -20,7 +20,8 @@ namespace PelicanChat.Modules
     public sealed class ChatTransportModule : IModule
     {
         private ModContext? context;
-        private bool commandsChecked;
+        private bool discordCommandRegistered;
+        private bool autonomousCommandsRegistered;
 
         public string Name => "ChatTransport";
 
@@ -37,26 +38,31 @@ namespace PelicanChat.Modules
 
         private void EnsureCommandsRegistered()
         {
-            if (context == null || commandsChecked)
+            if (context == null)
                 return;
 
             try
             {
                 // /d y /discord siempre se registran si nadie los ha tomado
-                if (!ChatCommands.Exists("discord"))
+                if (!discordCommandRegistered)
                 {
-                    ChatCommands.Register(
-                        "discord",
-                        HandleDiscordCommand,
-                        _ => I18n.Get("chat.discord_help"),
-                        new[] { "d" },
-                        mainOnly: false,
-                        multiplayerOnly: false,
-                        cheatsOnly: false);
+                    if (!ChatCommands.Exists("discord"))
+                    {
+                        ChatCommands.Register(
+                            "discord",
+                            HandleDiscordCommand,
+                            _ => I18n.Get("chat.discord_help"),
+                            new[] { "d" },
+                            mainOnly: false,
+                            multiplayerOnly: false,
+                            cheatsOnly: false);
+                    }
+
+                    discordCommandRegistered = true;
                 }
 
-                // Si Pelican 4Ever NO está activo, PelicanChat provee /l, /g y /w autónomamente
-                if (!context.PelicanBridge.IsPelican4EverActive)
+                // Si Pelican 4Ever NO está activo (o se desactivó dinámicamente), PelicanChat provee /l, /g y /w autónomamente
+                if (!autonomousCommandsRegistered && !context.PelicanBridge.IsPelican4EverActive)
                 {
                     if (!ChatCommands.Exists("w"))
                         ChatCommands.RegisterAlias("w", "message");
@@ -84,9 +90,9 @@ namespace PelicanChat.Modules
                             multiplayerOnly: true,
                             cheatsOnly: false);
                     }
-                }
 
-                commandsChecked = true;
+                    autonomousCommandsRegistered = true;
+                }
             }
             catch (Exception ex)
             {

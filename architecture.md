@@ -1,7 +1,7 @@
 # `architecture.md` — Documento de Arquitectura Técnica (*PelicanChat*)
 
 > **Plataforma verificada:** Stardew Valley **1.6.15** (decompilado con `ilspycmd` sobre `Stardew Valley.dll`) · **SMAPI 4.1+** (probado en 4.5.2) · **Harmony 2.x** · **.NET 6.0 / .NET 8.0 SDK**.
-> **Integración objetivo:** **Pelican 4Ever** (`Pelican4Ever.SVRTMP` v0.4.0+) y puente **Hermes / Putre Discord**.
+> **Integración objetivo:** **Pelican 4Ever** (`Pelican4Ever.SVRTMP` v0.4.0+) y puente Discord operado por **Yuki** (`DEC-0004`).
 
 ---
 
@@ -20,8 +20,10 @@ PelicanChat.sln
 ├── design.md                            # Resumen de diseño
 ├── architecture.md                      # Este documento
 ├── backlog.md                           # Backlog técnico y de producto
+├── scripts/
+│   └── verify_brain.py                  # Verificador y enrutador del Project Brain (EST-001)
 ├── docs/
-│   └── adr/                             # Decisiones de arquitectura (ADR-0001..0003)
+│   └── adr/                             # Decisiones de arquitectura (ADR-0001..0004)
 ├── PelicanChat.Core/                    # Lógica pura (.NET 6, CERO referencias a Stardew/SMAPI/Harmony)
 │   ├── Config/
 │   │   └── ChatConfig.cs                # Configuración validada (historial, viewport, pestañas, Discord)
@@ -46,9 +48,12 @@ PelicanChat.sln
 │   │   └── zh-CN.json                   # Chino simplificado
 │   ├── Framework/
 │   │   ├── IModule.cs
+│   │   ├── I18n.cs                      # Helper de traducciones SMAPI
 │   │   ├── ModContext.cs
 │   │   ├── HarmonyPatchToggle.cs        # Activación/desactivación reversible de parches Harmony
 │   │   └── IPelican4EverChatApi.cs      # Interfaz espejo para consumir GetApi() de Pelican4Ever.SVRTMP
+│   ├── Models/
+│   │   └── ChatNetworkModels.cs         # Payloads SMAPI (LocalChat, Discord, ServerBroadcast)
 │   ├── Integration/
 │   │   └── Pelican4EverBridge.cs        # Detección de Pelican4Ever, reloj 1:1 y delegación de canales
 │   ├── Patches/
@@ -57,10 +62,10 @@ PelicanChat.sln
 │   │   ├── ChatTabBarRenderer.cs        # Barra de pestañas y badges sobre el ChatBox
 │   │   └── ChatScrollRenderer.cs        # Recorte vertical, scrollbar nativa y píldora "↓ N nuevos"
 │   └── Modules/
-│       ├── ChatViewModule.cs            # Ciclo de vida de la vista y eventos de teclado/ratón
-│       ├── ChatTransportModule.cs       # Red SMAPI autónoma (si Pelican4Ever no está activo)
-│       └── DiscordBridgeModule.cs       # Puente saliente/entrante autónomo (Webhook / loopback)
-└── PelicanChat.Tests/                   # Suite xUnit (.NET 8) sobre PelicanChat.Core
+│       ├── ChatViewModule.cs            # Ciclo de vida de la vista, pchat_status y eventos UI
+│       ├── ChatTransportModule.cs       # Red SMAPI autónoma y consumo de ServerBroadcast
+│       └── DiscordBridgeModule.cs       # Puente saliente/entrante (Pelican4Ever o Webhook/loopback)
+└── PelicanChat.Tests/                   # Suite xUnit (.NET 8) sobre PelicanChat.Core, i18n y Brain
 ```
 
 ---
@@ -172,9 +177,9 @@ En `ModEntry` (`PelicanChat`), durante `GameLoop.GameLaunched`:
 var api = Helper.ModRegistry.GetApi<IPelican4EverChatApi>("Pelican4Ever.SVRTMP");
 ```
 
-Si `api != null && api.IsPelican4EverEnabled()`:
-1. **Reloj 1:1:** `PelicanChat` consulta la hora actual del servidor (`GetServerClockSummary()` o lee `Game1.timeOfDay` + estado `IsNightHold`) para etiquetar cada `ChatEntry` con `[HH:mm]`.
-2. **No colisión en `ChatCommands`:** `Pelican4Ever` (`ChatChannelModule.cs`) ya registra `/l`, `/local`, `/g`, `/global` y el alias `/w`. `PelicanChat` verifica `ChatCommands.Exists(...)` antes de registrar comandos y, cuando `Pelican4Ever` está activo, delega en `ChatChannelModule` la emisión de `/l` y escucha su tipo de mensaje SMAPI (`LocalChat`) o consume el evento de `IPelican4EverChatApi`.
+Si `api != null && api.IsModEnabled()`:
+1. **Reloj 1:1:** `PelicanChat` consulta la hora actual del servidor (`api.GetServerTimeFormatted()`, con fallback a `Game1.timeOfDay` o hora local) para etiquetar cada `ChatEntry` con `[HH:mm]`.
+2. **No colisión en `ChatCommands`:** `Pelican4Ever` (`ChatChannelModule.cs`) ya registra `/l`, `/local`, `/g`, `/global` y el alias `/w`. `PelicanChat` verifica `ChatCommands.Exists(...)` antes de registrar comandos y, cuando `Pelican4Ever` está activo, delega en `ChatChannelModule` la emisión de `/l` y procesa `ServerBroadcast` o publica eventos vía `api.PublishChatEvent(channel, senderName, message)`.
 3. **Clasificador de Eventos de `Pelican 4Ever` (`SystemMessageClassifier`):**
    Identifica determinísticamente mensajes de:
    - **Rollover y Madrugada:** `[Reinicio Controlado]`, avisos de cuenta atrás de las `02:00 AM`, congelación en `2550`.
@@ -189,36 +194,35 @@ sequenceDiagram
     participant Player as Jugador (Cliente SMAPI)
     participant PChat as PelicanChat (ChatBox)
     participant Host as Host Pelican4Ever (AdminApiModule)
-    participant Putre as Puente Discord (Putre / Daemon)
+    participant Yuki as Puente Discord (Yuki / AWS EC2)
     participant Discord as Canal de Discord
 
-    Note over Player,Discord: Flujo Saliente (Juego -> Discord)
+    Note over Player,Discord: Flujo Saliente (Juego -> Discord, solo canal Discord /d)
     Player->>PChat: Escribe en pestaña [Discord] o /d "¡Hola Taberna!"
-    PChat->>Host: SMAPI SendMessage (DiscordChatOutbound)
-    Host->>Host: EventLog.Append("chat.message", ...)
-    Putre->>Host: GET /api/v1/host/events?since=N (Bearer Token)
-    Host-->>Putre: Evento chat.message { channel: "discord", author, text }
-    Putre->>Discord: Publica "[Valle] Jugador: ¡Hola Taberna!"
+    PChat->>Host: SMAPI SendMessage (PelicanChat.DiscordOutbound)
+    Host->>Host: PublishChatEvent -> EventLog.Append("chat.message", channel="discord")
+    Yuki->>Host: GET /api/v1/host/events?since=N (Bearer Token / ops.sock)
+    Host-->>Yuki: Evento chat.message { channel: "discord", senderName, message }
+    Yuki->>Discord: Publica "**[Valley] Jugador:** ¡Hola Taberna!"
 
     Note over Player,Discord: Flujo Entrante (Discord -> Juego)
-    Discord->>Putre: Mensaje de usuario en canal autorizado
-    Putre->>Host: POST /api/v1/host/chat { source: "discord", author, message }
-    Host->>Host: ChatSanitizer + MainThreadActionQueue
-    Host-->>Player: SMAPI Broadcast (ServerChatBroadcast)
+    Discord->>Yuki: Mensaje de usuario en canal autorizado (#pelicanchat)
+    Yuki->>Host: POST /api/v1/host/chat { source: "discord", author, message }
+    Host->>Host: SanitizeExternalChatText + MainThreadActionQueue
+    Host-->>Player: SMAPI Broadcast (ServerBroadcast)
     Host-->>PChat: Pinta "[Discord] Autor: mensaje" en pestaña Discord/Todo
 ```
 
-### 3.3 Correcciones y Extensiones Necesarias en `Pelican 4Ever` (Puente)
+### 3.3 Estado del Puente en `Pelican 4Ever` (`P4E-CHAT-01..03`)
 
-Durante el análisis del repositorio `Stardew Valley MORPG` se han identificado 3 mejoras concretas que deben aplicarse en `Pelican4Ever` para cerrar el puente al 100%:
+Las tres extensiones requeridas en el repositorio hermano `Pelican4Ever` están **implementadas**:
 
-1. **`P4E-CHAT-01` — Ampliar `PelicanApi.cs`:**
-   Exponer `IsModEnabled`, lectura horaria del servidor (`GetClockSnapshot`) y hook de registro/emisión de chat por canal para que `PelicanChat` (u otros mods) consulten el estado sin acoplarse a tipos internos.
-2. **`P4E-CHAT-02` — Retransmisión real en `AdminApiModule.BroadcastToAllPlayers`:**
-   Actualmente `AdminApiModule.cs:696-710` llama únicamente a `Game1.chatBox?.addMessage(...)` en el proceso del Host (invisible para los clientes cuando corre con `HeadlessRendering` o `DedicatedServerMode`). Debe emitir además un mensaje SMAPI (`ChatMessages.ServerBroadcast`) hacia todos los clientes conectados.
-3. **`P4E-CHAT-03` — Endpoint `POST /api/v1/host/chat` y evento `HostEventTypes.ChatMessage`:**
-   - Añadir `public const string ChatMessage = "chat.message";` en `Pelican4Ever.Core/Admin/HostEventLog.cs`.
-   - Añadir la ruta oficial `POST /api/v1/host/chat` en `Pelican4Ever.Core/Admin/HostApiContract.cs` (y en `docs/host-api.md`, verificando el test de paridad `ExtractDocumentedRoutes`) y su despacho en `AdminApiModule.cs`.
+1. **`P4E-CHAT-01` — `Pelican4Ever/PelicanApi.cs` (Implementado):**
+   Expone `IsModEnabled()`, `GetServerTimeFormatted()` y `PublishChatEvent(string channel, string senderName, string message)` para que `PelicanChat` consuma el estado vía `ModRegistry.GetApi<IPelican4EverChatApi>` sin acoplamiento de ensamblado.
+2. **`P4E-CHAT-02` — `AdminApiModule.BroadcastToAllPlayers` (Implementado):**
+   Emite el paquete SMAPI `ChatMessages.ServerBroadcast` hacia `Pelican4Ever.SVRTMP` y `Pelican4Ever.Chat` además de invocar `Game1.chatBox?.addMessage(...)` localmente.
+3. **`P4E-CHAT-03` — `POST /api/v1/host/chat` y `HostEventTypes.ChatMessage` (Implementado):**
+   `HostEventTypes.ChatMessage = "chat.message"` en `Pelican4Ever.Core/Admin/HostEventLog.cs` y la ruta `POST /api/v1/host/chat` en `HostApiContract.cs`, `AdminApiModule.cs` y `docs/host-api.md`.
 
 ---
 

@@ -1,6 +1,6 @@
 # ADR-0003: Puente Seguro con Discord y Sanitización de Mensajes Externos
 
-* **Estado:** Aceptado
+* **Estado:** Aceptado (punto 1 actualizado por [ADR-0004](0004-discord-channel-only-and-yuki-relay.md): solo se reenvía el canal `Discord` y **Yuki** sustituye a Putre/Hermes)
 * **Fecha:** 2026-11-15
 * **Ámbito:** `PelicanChat/Modules/{DiscordBridgeModule,ChatTransportModule}.cs`, `PelicanChat.Core/Discord/*`, `PelicanChat.Core/Channels/*`
 

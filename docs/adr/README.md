@@ -6,7 +6,8 @@ Un ADR es una **decisión** y su motivo: no se reescribe cuando el contexto camb
 | --- | --- | --- | --- |
 | [0001](0001-standalone-mod-and-pelican4ever-bridge.md) | Mod independiente (`Pelican4Ever.Chat`) con modo autónomo y puente automático hacia `Pelican 4Ever` | Aceptado | 2026-11-15 |
 | [0002](0002-chatbox-harmony-viewport-and-tabs.md) | Conservar `Game1.chatBox` (`ChatBox`) con parches Harmony reversibles respaldados por `ChatViewState` en `PelicanChat.Core` | Aceptado | 2026-11-15 |
-| [0003](0003-discord-bridge-and-message-sanitization.md) | Cero tokens de Discord en clientes; puente en Host (`/api/v1/host/chat` + `HostEventLog`) y sanitización obligatoria | Aceptado | 2026-11-15 |
+| [0003](0003-discord-bridge-and-message-sanitization.md) | Cero tokens de Discord en clientes; puente en Host (`/api/v1/host/chat` + `HostEventLog`) y sanitización obligatoria | Aceptado (punto 1 actualizado por 0004) | 2026-11-15 |
+| [0004](0004-discord-channel-only-and-yuki-relay.md) | Relevo exclusivo del canal `Discord` (`chat.message`) por **Yuki** (`DEC-0004`) y contrato real `IPelican4EverChatApi` | Aceptado | 2026-11-26 |
 
 ## Cómo leerlos
 

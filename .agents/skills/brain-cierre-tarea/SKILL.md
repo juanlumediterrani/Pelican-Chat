@@ -15,6 +15,7 @@ Ejecuta estos pasos antes de cerrar cualquier tarea o preparar commit/PR en `Pel
 ## 1. Verificación Técnica Obligatoria
 
 ```bash
+python3 scripts/verify_brain.py --check
 python3 "../MCP Pelican/skills/smapi-harmony-pelican-bridge/scripts/check_harmony_patches.py" . --strict
 dotnet build PelicanChat.sln -p:EnableModDeploy=false -p:EnableModZip=false
 dotnet test PelicanChat.sln -p:EnableModDeploy=false -p:EnableModZip=false
@@ -29,7 +30,7 @@ dotnet test PelicanChat.sln -p:EnableModDeploy=false -p:EnableModZip=false
 
 | Si modificaste... | Qué actualizar en el mismo commit |
 | --- | --- |
-| `IPelican4EverChatApi`, `Pelican4EverBridge.cs` o contrato `ExternalChatContract` | [`ADR-0001`](../../../docs/adr/0001-standalone-mod-and-pelican4ever-bridge.md) / [`ADR-0003`](../../../docs/adr/0003-discord-bridge-and-message-sanitization.md) y [`architecture.md`](../../../architecture.md) |
+| `IPelican4EverChatApi`, `Pelican4EverBridge.cs` o contrato `ExternalChatContract` | [`ADR-0001`](../../../docs/adr/0001-standalone-mod-and-pelican4ever-bridge.md) / [`ADR-0003`](../../../docs/adr/0003-discord-bridge-and-message-sanitization.md) / [`ADR-0004`](../../../docs/adr/0004-discord-channel-only-and-yuki-relay.md) y [`architecture.md`](../../../architecture.md) |
 | Parches en `ChatBoxPatches.cs`, viewport o `HarmonyPatchToggle.cs` | [`ADR-0002`](../../../docs/adr/0002-chatbox-harmony-viewport-and-tabs.md) |
 | Claves de configuración o i18n (`ChatConfig`, `i18n/*.json`) | [`design.md`](../../../design.md) y [`AGENTS.md`](../../../AGENTS.md) si cambia el mapa |
 
