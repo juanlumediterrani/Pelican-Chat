@@ -6,5 +6,5 @@
   "UniqueID": "Pelican4Ever.Chat",
   "EntryDll": "PelicanChat.dll",
   "MinimumApiVersion": "4.1.0",
-  "UpdateKeys": []
+  "UpdateKeys": [ "GitHub:juanlumediterrani/Pelican-Chat" ]
 }
